@@ -1,7 +1,3 @@
-*.filters
-*.sln
-*.vcxproj
-*.user
 Debug/*
 other/*
 
