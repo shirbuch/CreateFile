@@ -7,6 +7,8 @@
 #define RESTRICTED_PATH "c:\folderstopsecret"
 #define NUM_ARGS (2)
 
+int8_t tchar_strcpy(TCHAR* to, TCHAR* from);
+
 int main(int argc, char* argv[])
 {
 	TCHAR path[MAX_INPUT_LEN + 1];
@@ -18,6 +20,12 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
+	if (tchar_strcpy(path, argv[NUM_ARGS - 1]) || tchar_strcpy(fileName, argv[NUM_ARGS]))
+	{
+		printf_s("Error in reading arguments.\n");
+		return -1;
+	}
+	
 	return 0;
 }
 
