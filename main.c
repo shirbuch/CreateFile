@@ -4,17 +4,20 @@
 
 #define MAX_INPUT_LEN (32767)
 #define RESTRICTED_PATH "c:\folderstopsecret"
+#define NUM_ARGS (2)
 
 int main(int argc, char* argv[])
 {
-	TCHAR* path;
-	TCHAR* fileName;
+	TCHAR path[MAX_INPUT_LEN];
+	TCHAR fileName[MAX_INPUT_LEN];
 
-	printf_s("argc: %d\n", argc);
-	for (size_t i = 1; i < argc; ++i)
+	if (argc - 1 != NUM_ARGS)
 	{
-		printf_s("%s\n", argv[i]);
+		printf_s("Not 2 args inserted.\nExpected usage: CreateFile.exe <filePath> <fileName>\n");
+		return -1;
 	}
 
 	return 0;
 }
+
+
