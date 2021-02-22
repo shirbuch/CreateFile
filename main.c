@@ -20,7 +20,9 @@ int wmain(int argc, TCHAR* argv[])
 {
 	TCHAR path[MAX_INPUT_LEN + 1];
 	TCHAR fileName[MAX_INPUT_LEN + 1];
+	TCHAR path_and_fileName[2 * (MAX_INPUT_LEN + 1)];
 
+	/* Get and check args */
 	// Check if the number of arguments is correct
 	if (argc - 1 != NUM_ARGS)
 	{
@@ -35,13 +37,6 @@ int wmain(int argc, TCHAR* argv[])
 		return -1;
 	}
 
-	// Test printing
-	/*
-	_setmode(_fileno(stdout), _O_U16TEXT);
-	wprintf(L"\x263a\x263b\n");
-	wprintf(L"%ls\n%ls\n", path, fileName);
-	*/
-
 	// Check if the file is not executable	
 	if (is_substr_from_index(fileName, EXE_ENDING, wcslen(fileName) - wcslen(EXE_ENDING)))
 	{
@@ -55,6 +50,30 @@ int wmain(int argc, TCHAR* argv[])
 		printf_s("Unexeptable path.\n");
 		return -1;
 	}
+
+
+	/* Create the file */
+
+	// Open a handle to the file
+	HANDLE hFile = CreateFile(
+		L"C:\\Users\\Shir Buchner\\Documents\\צבא\\הכשרה ענפית\\2 Create File\\CreateFile\\other\\NewFile.txt",     // Filename
+		GENERIC_WRITE,          // Desired access
+		FILE_SHARE_READ,        // Share mode
+		NULL,                   // Security attributes
+		CREATE_NEW,             // Creates a new file, only if it doesn't already exist
+		FILE_ATTRIBUTE_NORMAL,  // Flags and attributes
+		NULL);                  // Template file handle
+
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		// Failed to open/create file
+		return 2;
+	}
+
+	 // Close the handle once we don't need it.
+	CloseHandle(hFile);
+
+
 
 	return 0;
 }
@@ -114,3 +133,24 @@ bool is_substr_from_index(TCHAR* str, TCHAR* substr, size_t index)
 
 	return true;
 }
+
+
+
+// Write data to the file
+/*
+wchar_t* strText = L"Hello World!";
+DWORD bytesWritten;
+WriteFile(
+	hFile,            // Handle to the file
+	strText,  // Buffer to write
+	wcslen(strText),   // Buffer size
+	&bytesWritten,    // Bytes written
+	NULL);         // Overlapped
+*/
+
+// Test printing
+/*
+_setmode(_fileno(stdout), _O_U16TEXT);
+wprintf(L"\x263a\x263b\n");
+wprintf(L"%ls\n%ls\n", path, fileName);
+*/
