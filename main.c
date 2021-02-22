@@ -13,7 +13,7 @@
 #define NUM_ARGS (2)
 
 int8_t tchar_strcpy(TCHAR* to, TCHAR* from);
-bool is_prefix(TCHAR* str, TCHAR* prefix);
+bool is_substr_from_index(TCHAR* str, TCHAR* substr, size_t index);
 
 int wmain(int argc, TCHAR* argv[])
 {
@@ -41,14 +41,14 @@ int wmain(int argc, TCHAR* argv[])
 	wprintf(L"%ls\n%ls\n", path, fileName);
 	*/
 
+	// Check if the file is not executable
+
 	// Check if the path is valid
-	if (is_prefix(path, RESTRICTED_PATH))
+	if (is_substr_from_index(path, RESTRICTED_PATH, 0))
 	{
 		printf_s("Unexeptable path.\n");
 		return -1;
 	}
-
-
 
 	return 0;
 }
@@ -82,19 +82,25 @@ int8_t tchar_strcpy(TCHAR *to, TCHAR *from)
 	return 0;
 }
 
-bool is_prefix(TCHAR* str, TCHAR* prefix)
+bool is_substr_from_index(TCHAR* str, TCHAR* substr, size_t index)
 {
 	// Check if the pointers are NULL
-	if (str == NULL || prefix == NULL)
+	if (str == NULL || substr == NULL)
 	{
 		return false;
 	}
 
-	// Check if the prefix exist in the string
-	for (size_t i = 0; prefix[i] != '\0'; ++i)
+	// Check if index doesn't exist in str
+	if (strlen(str) < index)
+	{
+		return false;
+	}
+
+	// Check if the substr exist in the string from index
+	for (size_t i = index; substr[i - index] != '\0'; ++i)
 	{
 		// Check if we finished the string or non-matching chars
-		if (str[i] == '\0' || str[i] != prefix[i])
+		if (str[i] == '\0' || str[i] != substr[i - index])
 		{
 			return false;
 		}
