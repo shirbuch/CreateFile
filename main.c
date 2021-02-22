@@ -8,25 +8,30 @@
 #include <stdbool.h>
 #include <string.h>
 
+//!!! todo add error codes
+
 #define MAX_INPUT_LEN (200) //!!!(32767)
 #define RESTRICTED_PATH ((TCHAR *) L"c:\\folderstopsecret")
 #define EXE_ENDING ((TCHAR *) L".exe") //, ((TCHAR *) L".bat"), ((TCHAR*)L".bin"), ((TCHAR*)L".cmd") } //!!! change the search
 #define NUM_ARGS (2)
+#define MAKAF ((TCHAR *) L"\\") //!!!
 
 int8_t tchar_strcpy(TCHAR* to, TCHAR* from);
 bool is_substr_from_index(TCHAR* str, TCHAR* substr, size_t index);
+uint8_t combine_strs(TCHAR* to, TCHAR** froms, size_t amount);
 
 int wmain(int argc, TCHAR* argv[])
 {
 	TCHAR path[MAX_INPUT_LEN + 1];
 	TCHAR fileName[MAX_INPUT_LEN + 1];
-	TCHAR path_and_fileName[2 * (MAX_INPUT_LEN + 1)];
+	TCHAR full_path[2 * (MAX_INPUT_LEN + 1)];
+	TCHAR* path_and_fileName[3] = {path, MAKAF, fileName};
 
 	/* Get and check args */
 	// Check if the number of arguments is correct
 	if (argc - 1 != NUM_ARGS)
 	{
-		printf_s("Not 2 args inserted.\nExpected usage: CreateFile.exe <filePath> <fileName>\n");
+		printf_s("Not 2 args inserted.\nPlease beware of spaces inside path. Fix by adding \" on both sides.\nExpected usage: CreateFile.exe <filePath> <fileName>\n");
 		return -1;
 	}
 
@@ -53,6 +58,14 @@ int wmain(int argc, TCHAR* argv[])
 
 
 	/* Create the file */
+	// Combine the path and the file name
+	if (combine_strs(full_path, path_and_fileName, 3))
+	{
+		printf_s("Error in combining path and file name.\n");
+		return -1;
+	}
+
+	wprintf(L"%ls\n%ls\n->\n%ls\n", path, fileName, full_path);
 
 	// Open a handle to the file
 	HANDLE hFile = CreateFile(
@@ -134,6 +147,34 @@ bool is_substr_from_index(TCHAR* str, TCHAR* substr, size_t index)
 	return true;
 }
 
+uint8_t combine_strs(TCHAR* to, TCHAR** froms, size_t amount)
+{
+	// Check if the pointers are NULL
+	if (froms == NULL)
+	{
+		return -1;
+	}
+
+	for (size_t i = 0; i < amount; ++i)
+	{
+		if (froms[i] == NULL)
+		{
+			return -1;
+		}
+	}
+
+	// Combine all strs into 'to'
+	for (size_t i = 0, index = 0; i < amount; index += wcslen(froms[i]), ++i)
+	{
+		// Add the next str to 'to'
+		if (tchar_strcpy(&(to[index]), froms[i]))
+		{
+			return -1;
+		}
+	}
+
+	return 0;
+}
 
 
 // Write data to the file
