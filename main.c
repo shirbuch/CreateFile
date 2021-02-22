@@ -9,7 +9,7 @@
 #include <string.h>
 
 #define MAX_INPUT_LEN (200) //!!!(32767)
-#define RESTRICTED_PATH ((TCHAR *) L"c:\folderstopsecret")
+#define RESTRICTED_PATH ((TCHAR *) L"c:\\folderstopsecret")
 #define NUM_ARGS (2)
 
 int8_t tchar_strcpy(TCHAR* to, TCHAR* from);
