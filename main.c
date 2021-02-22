@@ -8,19 +8,19 @@
 #include <stdbool.h>
 #include <string.h>
 
-//!!! todo add error codes
+//todo todo add error codes
 
-#define MAX_INPUT_LEN (200) //!!!(32767)
+#define MAX_INPUT_LEN (200) //todo(32767)
 #define RESTRICTED_PATH ((TCHAR *) L"c:\\folderstopsecret")
-#define EXE_ENDING ((TCHAR *) L".exe") //, ((TCHAR *) L".bat"), ((TCHAR*)L".bin"), ((TCHAR*)L".cmd") } //!!! change the search
+#define EXE_ENDING ((TCHAR *) L".exe") //, ((TCHAR *) L".bat"), ((TCHAR*)L".bin"), ((TCHAR*)L".cmd") } //todo change the search
 #define NUM_ARGS (2)
-#define MAKAF ((TCHAR *) L"\\") //!!!
+#define MAKAF ((TCHAR *) L"\\") //todo
 
 int8_t tchar_strcpy(TCHAR* to, TCHAR* from);
 bool is_substr_from_index(TCHAR* str, TCHAR* substr, size_t index);
 uint8_t combine_strs(TCHAR* to, TCHAR** froms, size_t amount);
 
-int wmain(int argc, TCHAR* argv[])
+int wmain(int argc, TCHAR* argv[]) //todo puth sections into functions
 {
 	TCHAR path[MAX_INPUT_LEN + 1];
 	TCHAR fileName[MAX_INPUT_LEN + 1];
@@ -65,11 +65,9 @@ int wmain(int argc, TCHAR* argv[])
 		return -1;
 	}
 
-	wprintf(L"%ls\n%ls\n->\n%ls\n", path, fileName, full_path);
-
-	// Open a handle to the file
+	// Open a handle to the file //todo check other params
 	HANDLE hFile = CreateFile(
-		L"C:\\Users\\Shir Buchner\\Documents\\צבא\\הכשרה ענפית\\2 Create File\\CreateFile\\other\\NewFile.txt",     // Filename
+		full_path,				// Filename
 		GENERIC_WRITE,          // Desired access
 		FILE_SHARE_READ,        // Share mode
 		NULL,                   // Security attributes
@@ -85,7 +83,6 @@ int wmain(int argc, TCHAR* argv[])
 
 	 // Close the handle once we don't need it.
 	CloseHandle(hFile);
-
 
 
 	return 0;
@@ -189,9 +186,11 @@ WriteFile(
 	NULL);         // Overlapped
 */
 
-// Test printing
+// Printing
 /*
 _setmode(_fileno(stdout), _O_U16TEXT);
 wprintf(L"\x263a\x263b\n");
 wprintf(L"%ls\n%ls\n", path, fileName);
+
+wprintf(L"%ls\n%ls\n->\n%ls\n", path, fileName, full_path);
 */
