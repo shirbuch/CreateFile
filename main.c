@@ -10,6 +10,7 @@
 
 #define MAX_INPUT_LEN (200) //!!!(32767)
 #define RESTRICTED_PATH ((TCHAR *) L"c:\\folderstopsecret")
+#define EXE_ENDING ((TCHAR *) L".exe") //, ((TCHAR *) L".bat"), ((TCHAR*)L".bin"), ((TCHAR*)L".cmd") } //!!! change the search
 #define NUM_ARGS (2)
 
 int8_t tchar_strcpy(TCHAR* to, TCHAR* from);
@@ -41,7 +42,12 @@ int wmain(int argc, TCHAR* argv[])
 	wprintf(L"%ls\n%ls\n", path, fileName);
 	*/
 
-	// Check if the file is not executable
+	// Check if the file is not executable	
+	if (is_substr_from_index(fileName, EXE_ENDING, wcslen(fileName) - wcslen(EXE_ENDING)))
+	{
+		printf_s("Unexeptable file name.\n");
+		return -1;
+	}
 
 	// Check if the path is valid
 	if (is_substr_from_index(path, RESTRICTED_PATH, 0))
@@ -91,7 +97,7 @@ bool is_substr_from_index(TCHAR* str, TCHAR* substr, size_t index)
 	}
 
 	// Check if index doesn't exist in str
-	if (strlen(str) < index)
+	if (wcslen(str) < index)
 	{
 		return false;
 	}
