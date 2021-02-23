@@ -12,7 +12,8 @@
 //todo todo add error codes
 
 #define MAX_INPUT_LEN (200) //todo (32767)
-#define RESTRICTED_FOLDER_NAME ((TCHAR *) L"\\folderstopsecret")
+#define RESTRICTED_FOLDER_NAME1 ((TCHAR *) L"\\foldertopsecret")
+#define RESTRICTED_FOLDER_NAME2 ((TCHAR *) L"/foldertopsecret")
 #define EXE_ENDING ((TCHAR *) L".exe") 
 #define DATA_ENDING ((TCHAR *) L":$DATA") 
 #define NUM_ARGS (2)
@@ -206,7 +207,6 @@ uint8_t combine_strs(TCHAR* to, TCHAR** froms, size_t amount)
 	return 0;
 }
 
-//todo check failure
 uint8_t createFile(TCHAR* full_path)
 {
 	//todo wprintf(L"\n***\n%ls\n", full_path);
@@ -256,13 +256,13 @@ bool valid_path(TCHAR* path)
 	size_t num_of_up = 0, num_of_down = 0;
 
 	// Path starts with driver like "C:" so the folder name won't start from 0
-	last_appearence = last_foldername_appearence(path, RESTRICTED_FOLDER_NAME);
+	last_appearence = max(last_foldername_appearence(path, RESTRICTED_FOLDER_NAME1), last_foldername_appearence(path, RESTRICTED_FOLDER_NAME2));
 	if (last_appearence == 0)
 	{
 		return true;
 	}
 
-	for(size_t i = last_appearence + wcslen(RESTRICTED_FOLDER_NAME) + 1; i < wcslen(path);)
+	for(size_t i = last_appearence + wcslen(RESTRICTED_FOLDER_NAME1) + 1; i < wcslen(path);)
 	{
 		if (is_substr_at_index(path, L"../", i) || is_substr_at_index(path, L"..\\", i) || is_substr_at_index(path, L"..", i))
 		{
@@ -276,15 +276,16 @@ bool valid_path(TCHAR* path)
 			{
 				++i;
 			}
+			++i;
+		}
+
+		if(num_of_up > num_of_down)
+		{
+			return true;
 		}
 	}
 
-	if (num_of_up == num_of_down)
-	{
-		return false;
-	}
-
-	return true;
+	return false;
 }
 
 size_t last_foldername_appearence(TCHAR* str, TCHAR* substr)
@@ -294,7 +295,7 @@ size_t last_foldername_appearence(TCHAR* str, TCHAR* substr)
 	// Get index of last appearance of RESTRICTED_FOLDER_NAME
 	for (size_t i = 0; i < wcslen(str); ++i)
 	{
-		if (is_substr_at_index(str, substr, i) && (str[i + 1] == L'\0' || str[i + 1] == L'\\' || str[i + 1] == L'/'))
+		if (is_substr_at_index(str, substr, i) && (str[i + wcslen(substr)] == L'\0' || str[i + wcslen(substr)] == L'\\' || str[i + wcslen(substr)] == L'/'))
 		{
 			last_appearence = i;
 		}
