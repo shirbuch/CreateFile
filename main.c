@@ -26,6 +26,7 @@ uint8_t get_full_path(int argc, TCHAR* argv[], TCHAR* full_path);
 bool valid_filename(TCHAR* fileName);
 bool valid_path(TCHAR* path);
 bool is_substr(TCHAR* str, TCHAR* substr);
+size_t last_foldername_appearence(TCHAR* str, TCHAR* substr);
 
 int wmain(int argc, TCHAR* argv[]) //todo puth sections into functions
 {
@@ -43,8 +44,6 @@ int wmain(int argc, TCHAR* argv[]) //todo puth sections into functions
 		printf_s("Unable to create file.\n");
 		return 1;
 	}
-
-	printf("%d\n", is_substr(L"hello", L"nk"));
 
 	return 0;
 }
@@ -253,11 +252,34 @@ bool valid_filename(TCHAR* fileName)
 
 bool valid_path(TCHAR* path)
 {
-	// Check if RESTRICTED_FOLDER_NAME is in the path
+	size_t last_appearence;
+	size_t num_of_up = 0, num_of_down = 0;
 
+	// Path starts with driver like "C:" so the folder name won't start from 0
+	last_appearence = last_foldername_appearence(path, RESTRICTED_FOLDER_NAME);
+	if (last_appearence == 0)
+	{
+		return true;
+	}
 
-	//todo
-	if (is_substr_at_index(path, RESTRICTED_FOLDER_NAME, 0))
+	for(size_t i = last_appearence + wcslen(RESTRICTED_FOLDER_NAME) + 1; i < wcslen(path);)
+	{
+		if (is_substr_at_index(path, L"../", i) || is_substr_at_index(path, L"..\\", i) || is_substr_at_index(path, L"..", i))
+		{
+			++num_of_up;
+			i += 3; // If ".." so it will end anyways
+		}
+		else
+		{
+			++num_of_down;
+			while (i < wcslen(path) && path[i] != '\\' && path[i] != '/')
+			{
+				++i;
+			}
+		}
+	}
+
+	if (num_of_up == num_of_down)
 	{
 		return false;
 	}
@@ -265,6 +287,21 @@ bool valid_path(TCHAR* path)
 	return true;
 }
 
+size_t last_foldername_appearence(TCHAR* str, TCHAR* substr)
+{
+	size_t last_appearence = 0;
+
+	// Get index of last appearance of RESTRICTED_FOLDER_NAME
+	for (size_t i = 0; i < wcslen(str); ++i)
+	{
+		if (is_substr_at_index(str, substr, i) && (str[i + 1] == L'\0' || str[i + 1] == L'\\' || str[i + 1] == L'/'))
+		{
+			last_appearence = i;
+		}
+	}
+
+	return last_appearence;
+}
 
 
 
